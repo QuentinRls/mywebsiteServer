@@ -53,7 +53,9 @@
         return res.status(400).send("Le fichier PDF est vide ou illisible.");
       }
 
-      const openai = new OpenAI();
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY, // Lire la clé depuis les variables d'environnement
+      });
 
       const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -111,7 +113,9 @@
     }
 
     try {
-      const openai = new OpenAI();
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY, // Lire la clé depuis les variables d'environnement
+      });
       const cleanQuestion = question.replace(/[\r\n]+/g, " ").trim();
 
       const completion = await openai.chat.completions.create({
