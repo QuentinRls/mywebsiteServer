@@ -144,8 +144,8 @@
     }
   });
 
-  // Lancer le serveur
-  const PORT = 3000;
+  const PORT = process.env.PORT || 3000; // Utilise le port assigné par Render ou 3000 par défaut pour le local
   app.listen(PORT, () => {
     console.log(`Serveur démarré sur le port ${PORT}`);
   });
+  
