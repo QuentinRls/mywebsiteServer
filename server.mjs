@@ -28,18 +28,12 @@ loadLegalData();
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = ["https://quentinrls.github.io/mywebsite"];
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "*", // Autorise temporairement toutes les origines
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
   })
 );
+
 app.options("*", cors()); // Gère les requêtes preflight
 app.use(express.static(path.resolve("public")));
 app.use(express.json());
