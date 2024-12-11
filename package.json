@@ -1,5 +1,5 @@
 {
-  "name": "website-server",
+  "name": "mywebsiteServer",
   "version": "1.0.0",
   "main": "server.mjs",
   "type": "module",
