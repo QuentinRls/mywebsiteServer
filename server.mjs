@@ -24,12 +24,16 @@
   };
 
   loadLegalData();
+  import cors from "cors";
 
   app.use(
     cors({
-      origin: "https://quentinrls.github.io/mywebsite/",
+      origin: "https://quentinrls.github.io", // Autorise GitHub Pages
+      methods: ["GET", "POST", "OPTIONS"], // Autorise les méthodes HTTP nécessaires
+      allowedHeaders: ["Content-Type"], // Autorise les en-têtes nécessaires
     })
   );
+  
 
   app.use(express.static(path.resolve("public")));
   app.use(express.json());
