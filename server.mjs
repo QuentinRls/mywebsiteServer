@@ -28,14 +28,13 @@ loadLegalData();
 
 app.use(
   cors({
-    origin: "*", // Autorise temporairement toutes les origines
+    origin: "*",
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
   })
 );
 
 app.options("*", cors()); // Gère les requêtes preflight
-app.use(express.static(path.resolve("public")));
 app.use(express.json());
 
 // Initialisation de l'API OpenAI
@@ -120,6 +119,45 @@ app.post("/legal-query", async (req, res) => {
   } catch (error) {
     console.error("Erreur lors de l'appel à l'API OpenAI :", error);
     res.status(500).json({ error: "Erreur lors de la génération de la réponse." });
+  }
+});
+
+// Endpoint 3 : Génération audio avec OpenAI
+app.post("/generate-audio", async (req, res) => {
+  const { question } = req.body;
+
+  if (!question || typeof question !== "string") {
+    return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
+  }
+
+  try {
+    const completion = await openai.createChatCompletion({
+      model: "gpt-4o-audio-preview",
+      modalities: ["text", "audio"],
+      audio: { voice: "alloy", format: "wav" },
+      messages: [
+        {
+          role: "user",
+          content: question,
+        },
+      ],
+    });
+
+    const audioData = completion.data.choices[0]?.message?.audio?.data;
+    if (audioData) {
+      const audioPath = path.resolve("./response.wav");
+      await fs.writeFile(audioPath, Buffer.from(audioData, "base64"));
+
+      res.json({
+        message: "Fichier audio généré avec succès.",
+        filePath: audioPath,
+      });
+    } else {
+      res.status(500).json({ error: "Aucune donnée audio n'a été générée." });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la génération de l'audio :", error);
+    res.status(500).json({ error: "Erreur lors de la génération de l'audio." });
   }
 });
 
