@@ -147,10 +147,12 @@ app.post("/generate-audio", async (req, res) => {
     });
 
     const audioData = completion.data.choices[0]?.message?.audio?.data;
+    console.log(completion.data.choices[0]?.message?.audio?.data);
+
     if (audioData) {
       const audioPath = path.resolve("./public/response.wav");
       await fs.writeFile(audioPath, Buffer.from(audioData, "base64"));
-
+      console.log(`Fichier audio écrit à : ${audioPath}`);
       res.json({
         message: "Fichier audio généré avec succès.",
         filePath: "/response.wav",
