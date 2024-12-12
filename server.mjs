@@ -162,6 +162,7 @@ app.post("/generate-image", async (req, res) => {
     // Save the image to the public directory
     const imageBuffer = await fetch(imageUrl).then((res) => res.buffer());
     const imagePath = path.resolve(publicDir, "generated-image.png");
+    console.log(imagePath);
     await fs.writeFile(imagePath, imageBuffer);
 
     res.json({
