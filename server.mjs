@@ -142,46 +142,40 @@ app.use((req, res, next) => {
     next();
 });
 
-// Endpoint 3 : Génération audio avec OpenAI
-app.post("/generate-audio", async (req, res) => {
-  const { question } = req.body;
+app.post("/generate-image", async (req, res) => {
+  const { prompt } = req.body;
 
-  if (!question || typeof question !== "string") {
-    return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
+  if (!prompt || typeof prompt !== "string") {
+    return res.status(400).json({ error: "Le prompt doit être une chaîne de caractères valide." });
   }
 
   try {
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "Vous êtes un assistant vocal qui génère des réponses audibles." },
-        { role: "user", content: question },
-      ],
+    const response = await openai.createImage({
+      prompt,
+      n: 1,
+      size: "1024x1024",
     });
 
-    // Utiliser le contenu généré pour synthèse vocale
-    const textToSynthesize = response.data.choices[0].message.content;
+    const imageUrl = response.data.data[0].url;
 
-    // Simuler un fichier audio (intégration réelle à faire avec une API de synthèse vocale)
-    const audioBuffer = Buffer.from(textToSynthesize, "utf-8");
-
-    const audioPath = path.resolve(publicDir, "response.wav");
-    await fs.writeFile(audioPath, audioBuffer);
-
-    console.log(`Fichier audio écrit à : ${audioPath}`);
+    // Save the image to the public directory
+    const imageBuffer = await fetch(imageUrl).then((res) => res.buffer());
+    const imagePath = path.resolve(publicDir, "generated-image.png");
+    await fs.writeFile(imagePath, imageBuffer);
 
     res.json({
-      message: "Fichier audio généré avec succès.",
-      filePath: `${req.protocol}://${req.get("host")}/response.wav`,
+      message: "Image générée avec succès.",
+      filePath: `${req.protocol}://${req.get("host")}/generated-image.png`,
     });
   } catch (error) {
-    console.error("Erreur lors de la génération de l'audio :", error);
-    res.status(500).json({ error: "Erreur lors de la génération de l'audio." });
+    console.error("Erreur lors de la génération de l'image :", error);
+    res.status(500).json({ error: "Erreur lors de la génération de l'image." });
   }
 });
 
-// Servir les fichiers statiques
+// Serve static files
 app.use(express.static(publicDir));
+
 
 // Lancer le serveur
 const PORT = process.env.PORT || 3000;
