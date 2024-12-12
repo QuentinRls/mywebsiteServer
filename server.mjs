@@ -166,7 +166,7 @@ app.post("/generate-image", async (req, res) => {
     await fs.writeFile(imagePath, imageBuffer);
 
     res.json({
-      message: "Image générée avec succès.",
+      message: `Image générée avec succès. filepath ${imagePath}`,
       imageUrl: `${req.protocol}://${req.get("host")}/generated-image.png`,
     });
     
