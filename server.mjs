@@ -13,6 +13,19 @@ const app = express();
 const upload = multer({ dest: "uploads/" });
 let legalData = "";
 const legalDataPath = path.resolve("./legalDb.txt");
+const publicDir = path.resolve("./public");
+
+// Vérifier si le dossier public existe, sinon le créer
+const ensurePublicDir = async () => {
+  try {
+    await fs.access(publicDir);
+  } catch (error) {
+    console.log("Dossier public non trouvé. Création du dossier...");
+    await fs.mkdir(publicDir, { recursive: true });
+  }
+};
+
+ensurePublicDir();
 
 // Charger les données juridiques
 const loadLegalData = async () => {
@@ -109,10 +122,7 @@ app.post("/legal-query", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `Vous êtes un assistant juridique.      
-          Vous devez guider l'utilisateur en fournissant des références aux livres,        
-          chapitres et sections pertinents du code pénal en fonction des données       
-          suivantes :\n\n${legalData}\n\nOrganisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de #.`,
+          content: `Vous êtes un assistant juridique.\nVous devez guider l'utilisateur en fournissant des références aux livres,\nchapitres et sections pertinents du code pénal en fonction des données\nsuivantes :\n\n${legalData}\n\nOrganisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de #.`,
         },
         { role: "user", content: question },
       ],
@@ -126,45 +136,45 @@ app.post("/legal-query", async (req, res) => {
 });
 
 // Endpoint 3 : Génération audio avec OpenAI
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
-
-// Endpoint pour générer et fournir un fichier audio
 app.post("/generate-audio", async (req, res) => {
   const { question } = req.body;
 
   if (!question || typeof question !== "string") {
-      return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
+    return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
   }
 
   try {
-      // Simulation de la génération d'audio
-      const audioBuffer = Buffer.from("données-audio-simulées", "utf-8"); // Remplacez par vos données réelles
+    const response = await openai.createChatCompletion({
+      model: "gpt-4o-audio-preview",
+      messages: [
+        { role: "system", content: "Vous êtes un assistant vocal qui génère des réponses audibles." },
+        { role: "user", content: question },
+      ],
+    });
 
-      // Chemin pour enregistrer le fichier
-      const audioPath = path.resolve("./public/response.wav");
-      await fs.writeFile(audioPath, audioBuffer);
+    // Utiliser le contenu généré pour synthèse vocale
+    const textToSynthesize = response.data.choices[0].message.content;
 
-      console.log(`Fichier audio écrit à : ${audioPath}`);
+    // Simuler un fichier audio (intégration réelle à faire avec une API de synthèse vocale)
+    const audioBuffer = Buffer.from(textToSynthesize, "utf-8");
 
-      // Retourner l'URL publique du fichier
-      res.json({
-          message: "Fichier audio généré avec succès.",
-          filePath: `${req.protocol}://${req.get("host")}/response.wav`
-      });
+    const audioPath = path.resolve(publicDir, "response.wav");
+    await fs.writeFile(audioPath, audioBuffer);
+
+    console.log(`Fichier audio écrit à : ${audioPath}`);
+
+    res.json({
+      message: "Fichier audio généré avec succès.",
+      filePath: `${req.protocol}://${req.get("host")}/response.wav`,
+    });
   } catch (error) {
-      console.error("Erreur lors de la génération de l'audio :", error);
-      res.status(500).json({ error: "Erreur lors de la génération de l'audio." });
+    console.error("Erreur lors de la génération de l'audio :", error);
+    res.status(500).json({ error: "Erreur lors de la génération de l'audio." });
   }
 });
 
-
 // Servir les fichiers statiques
-app.use(express.static(path.resolve("./public")));
+app.use(express.static(publicDir));
 
 // Lancer le serveur
 const PORT = process.env.PORT || 3000;
