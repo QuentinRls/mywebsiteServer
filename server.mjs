@@ -168,7 +168,6 @@ app.post("/generate-audio", async (req, res) => {
 
 // Servir les fichiers statiques
 app.use(express.static(path.resolve("./public")));
-
 // Lancer le serveur
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
