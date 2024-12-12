@@ -109,9 +109,9 @@ app.post("/legal-query", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `Vous êtes un assistant juridique. 
-          Vous devez guider l'utilisateur en fournissant des références aux livres, 
-          chapitres et sections pertinents du code pénal en fonction des données 
+          content: `Vous êtes un assistant juridique.      
+          Vous devez guider l'utilisateur en fournissant des références aux livres,        
+          chapitres et sections pertinents du code pénal en fonction des données       
           suivantes :\n\n${legalData}\n\nOrganisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de #.`,
         },
         { role: "user", content: question },
@@ -126,48 +126,49 @@ app.post("/legal-query", async (req, res) => {
 });
 
 // Endpoint 3 : Génération audio avec OpenAI
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+
+// Pour parser les JSON dans les requêtes
+app.use(express.json());
+
+// Endpoint pour générer et fournir un fichier audio
 app.post("/generate-audio", async (req, res) => {
   const { question } = req.body;
 
   if (!question || typeof question !== "string") {
-    return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
+      return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
   }
 
   try {
-    const completion = await openai.createChatCompletion({
-      model: "gpt-4o-audio-preview",
-      modalities: ["text", "audio"],
-      audio: { voice: "alloy", format: "wav" },
-      messages: [
-        {
-          role: "user",
-          content: question,
-        },
-      ],
-    });
+      // Simulation de la génération d'audio
+      const audioBuffer = Buffer.from("données-audio-simulées", "utf-8"); // Remplacez par vos données réelles
 
-    const audioData = completion.data.choices[0]?.message?.audio?.data;
-    console.log(completion.data.choices[0]?.message?.audio?.data);
-
-    if (audioData) {
+      // Chemin pour enregistrer le fichier
       const audioPath = path.resolve("./public/response.wav");
-      await fs.writeFile(audioPath, Buffer.from(audioData, "base64"));
+      await fs.writeFile(audioPath, audioBuffer);
+
       console.log(`Fichier audio écrit à : ${audioPath}`);
+
+      // Retourner l'URL publique du fichier
       res.json({
-        message: "Fichier audio généré avec succès.",
-        filePath: "/response.wav",
+          message: "Fichier audio généré avec succès.",
+          filePath: `${req.protocol}://${req.get("host")}/response.wav`
       });
-    } else {
-      res.status(500).json({ error: "Aucune donnée audio n'a été générée." });
-    }
   } catch (error) {
-    console.error("Erreur lors de la génération de l'audio :", error);
-    res.status(500).json({ error: "Erreur lors de la génération de l'audio." });
+      console.error("Erreur lors de la génération de l'audio :", error);
+      res.status(500).json({ error: "Erreur lors de la génération de l'audio." });
   }
 });
 
+
 // Servir les fichiers statiques
 app.use(express.static(path.resolve("./public")));
+
 // Lancer le serveur
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
