@@ -145,7 +145,7 @@ app.post("/generate-audio", async (req, res) => {
 
   try {
     const response = await openai.createChatCompletion({
-      model: "gpt-4o-audio-preview",
+      model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "Vous êtes un assistant vocal qui génère des réponses audibles." },
         { role: "user", content: question },
