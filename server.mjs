@@ -166,8 +166,9 @@ app.post("/generate-image", async (req, res) => {
 
     res.json({
       message: "Image générée avec succès.",
-      filePath: `${req.protocol}://${req.get("host")}/generated-image.png`,
+      imageUrl: `${req.protocol}://${req.get("host")}/generated-image.png`,
     });
+    
   } catch (error) {
     console.error("Erreur lors de la génération de l'image :", error);
     res.status(500).json({ error: "Erreur lors de la génération de l'image." });
