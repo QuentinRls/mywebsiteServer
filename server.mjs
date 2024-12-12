@@ -81,11 +81,17 @@ app.post("/upload-cv", upload.single("cvFile"), async (req, res) => {
         {
           role: "system",
           content:
-            "Vous êtes un assistant spécialisé en analyse de CV. Chaque titre sera entouré d'une double astérisque comme ceci : **Titre**. Veuillez fournir une analyse structurée du CV suivant les critères donnés.",
+            `Vous êtes un assistant spécialisé en analyse de CV. 
+            Chaque titre sera entouré d'une double astérisque comme ceci : **Titre**. Veuillez fournir une analyse structurée du CV suivant les critères donnés.`,
         },
         {
           role: "user",
-          content: `Voici le contenu du CV :\n${extractedText}\n\nPoste recherché : ${req.body.jobPosition || "Non spécifié"}. Veuillez analyser selon les instructions suivantes : \n1. **Compétences Analysées** : Listez les compétences mentionnées.\n2. **Résumé du profil** : Fournissez un résumé du profil.\n3. **Adéquation au poste demandé** : Indiquez si le candidat correspond au poste recherché.\n4. **Compétences manquantes** : Si nécessaire, listez les compétences à acquérir pour correspondre au poste demandé.`,
+          content: `Voici le contenu du CV :\n${extractedText}\n\nPoste recherché : ${req.body.jobPosition || "Non spécifié"}.
+           Veuillez analyser selon les instructions suivantes :
+           1. **Compétences Analysées** : Listez les compétences mentionnées.
+           2. **Résumé du profil** : Fournissez un résumé du profil.
+           3. **Adéquation au poste demandé** : Indiquez si le candidat correspond au poste recherché.
+           4. **Compétences manquantes** : Si nécessaire, listez les compétences à acquérir pour correspondre au poste demandé.`,
         },
       ],
     });
@@ -122,7 +128,10 @@ app.post("/legal-query", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `Vous êtes un assistant juridique.\nVous devez guider l'utilisateur en fournissant des références aux livres,\nchapitres et sections pertinents du code pénal en fonction des données\nsuivantes :\n\n${legalData}\n\nOrganisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de #.`,
+          content: `Vous êtes un assistant juridique.
+          Vous devez guider l'utilisateur en fournissant des références aux livres,
+          \nchapitres et sections pertinents du code pénal en fonction des donnéessuivantes :
+          \n\n${legalData}\n\nOrganisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de #.`,
         },
         { role: "user", content: question },
       ],
@@ -135,44 +144,29 @@ app.post("/legal-query", async (req, res) => {
   }
 });
 
-app.use((req, res, next) => {
-    if (req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(`https://${req.headers.host}${req.url}`);
-    }
-    next();
-});
+app.post("/test-query", async (req, res) => {
+  const { question } = req.body;
 
-app.post("/generate-image", async (req, res) => {
-  const { prompt } = req.body;
-
-  if (!prompt || typeof prompt !== "string") {
-    return res.status(400).json({ error: "Le prompt doit être une chaîne de caractères valide." });
+  if (!question || typeof question !== "string") {
+    return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
   }
 
   try {
-    const response = await openai.createImage({
-      model: "dall-e-3",
-      prompt,
-      n: 1,
-      size: "1024x1024",
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: `Vous etes un générateur de prompt, génère le prompt les plus pertinent pour une IA LLM comme toi a partir du texte fournis`,
+        },
+        { role: "user", content: question },
+      ],
     });
 
-    const imageUrl = response.data.data[0].url;
-
-    // Save the image to the public directory
-    const imageBuffer = await fetch(imageUrl).then((res) => res.buffer());
-    const imagePath = path.resolve(publicDir, "generated-image.png");
-    console.log(imagePath);
-    await fs.writeFile(imagePath, imageBuffer);
-
-    res.json({
-      message: `Image générée avec succès. filepath ${imagePath}`,
-      imageUrl: `${req.protocol}://${req.get("host")}/generated-image.png`,
-    });
-    
+    res.json({ answer: completion.data.choices[0].message.content });
   } catch (error) {
-    console.error("Erreur lors de la génération de l'image :", error);
-    res.status(500).json({ error: "Erreur lors de la génération de l'image." });
+    console.error("Erreur lors de l'appel à l'API OpenAI :", error);
+    res.status(500).json({ error: "Erreur lors de la génération de la réponse." });
   }
 });
 
