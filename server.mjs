@@ -151,6 +151,7 @@ app.post("/generate-image", async (req, res) => {
 
   try {
     const response = await openai.createImage({
+      model: "dall-e-3",
       prompt,
       n: 1,
       size: "1024x1024",
