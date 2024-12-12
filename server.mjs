@@ -109,7 +109,10 @@ app.post("/legal-query", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `Vous êtes un assistant juridique. Vous devez guider l'utilisateur en fournissant des références aux livres, chapitres et sections pertinents du code pénal en fonction des données suivantes :\n\n${legalData}\n\nOrganisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de #.`,
+          content: `Vous êtes un assistant juridique. 
+          Vous devez guider l'utilisateur en fournissant des références aux livres, 
+          chapitres et sections pertinents du code pénal en fonction des données 
+          suivantes :\n\n${legalData}\n\nOrganisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de #.`,
         },
         { role: "user", content: question },
       ],
@@ -145,12 +148,12 @@ app.post("/generate-audio", async (req, res) => {
 
     const audioData = completion.data.choices[0]?.message?.audio?.data;
     if (audioData) {
-      const audioPath = path.resolve("./response.wav");
+      const audioPath = path.resolve("./public/response.wav");
       await fs.writeFile(audioPath, Buffer.from(audioData, "base64"));
 
       res.json({
         message: "Fichier audio généré avec succès.",
-        filePath: audioPath,
+        filePath: "/response.wav",
       });
     } else {
       res.status(500).json({ error: "Aucune donnée audio n'a été générée." });
@@ -160,6 +163,9 @@ app.post("/generate-audio", async (req, res) => {
     res.status(500).json({ error: "Erreur lors de la génération de l'audio." });
   }
 });
+
+// Servir les fichiers statiques
+app.use(express.static(path.resolve("./public")));
 
 // Lancer le serveur
 const PORT = process.env.PORT || 3000;
