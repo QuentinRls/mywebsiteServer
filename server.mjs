@@ -133,9 +133,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Pour parser les JSON dans les requêtes
-app.use(express.json());
-
 // Endpoint pour générer et fournir un fichier audio
 app.post("/generate-audio", async (req, res) => {
   const { question } = req.body;
