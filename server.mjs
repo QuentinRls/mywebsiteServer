@@ -136,10 +136,10 @@ app.post("/legal-query", async (req, res) => {
 });
 
 app.use((req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
-      return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-  next();
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(`https://${req.headers.host}${req.url}`);
+    }
+    next();
 });
 
 // Endpoint 3 : Génération audio avec OpenAI
@@ -152,7 +152,7 @@ app.post("/generate-audio", async (req, res) => {
 
   try {
     const response = await openai.createChatCompletion({
-      model: "tts-1",
+      model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "Vous êtes un assistant vocal qui génère des réponses audibles." },
         { role: "user", content: question },
