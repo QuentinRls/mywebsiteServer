@@ -131,7 +131,8 @@ app.post("/legal-query", async (req, res) => {
           content: `Vous êtes un assistant juridique.
           Vous devez guider l'utilisateur en fournissant des références aux livres,
           chapitres et sections pertinents du code pénal en fonction des données suivantes :
-          \n\n${legalData}\n\n Organisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de # .`,
+          \n\n${legalData}\n\n Organisez votre réponse avec des titres encadrés de ** et précisez les références au livre, chapitre et section encadrées de ##
+          utilise les titre intelligement que la réponse sont bien ordonnée. IMPORTANT, ne jamais utiliser les caractère '-' et ':' `,
         },
         { role: "user", content: question },
       ],
