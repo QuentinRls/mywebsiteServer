@@ -159,7 +159,7 @@ Comprendre les implications juridiques de cette infraction ainsi que les section
 #Livre II, Chapitre IV, Section 3# : Relatif aux atteintes à la propriété.
 #Livre III, Chapitre I# : Sur les peines applicables pour [préciser].
 **Conclusion**
-Pour approfondir la réponse à votre question, consultez les références suivantes dans le code pénal : Livre II, Chapitre IV, Section 3 et Livre III, Chapitre I. Cela vous permettra d'avoir une compréhension complète des dispositions applicables.`,
+Pour approfondir la réponse à votre question, consultez les références suivantes dans le code pénal : #Livre II, Chapitre IV, Section 3# et #Livre III, Chapitre I#. Cela vous permettra d'avoir une compréhension complète des dispositions applicables.`,
         },
         { role: "user", content: question },
       ],
