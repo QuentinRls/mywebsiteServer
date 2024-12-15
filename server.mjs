@@ -136,8 +136,8 @@ app.post("/legal-query", async (req, res) => {
         { role: "user", content: question },
       ],
     });
-
-    res.json({ answer: completion.data.choices[0].message.content });
+    console.log(completion.data.choices[0].message)
+    res.json({ answer: completion.data.choices[0].message.content, });
   } catch (error) {
     console.error("Erreur lors de l'appel à l'API OpenAI :", error);
     res.status(500).json({ error: "Erreur lors de la génération de la réponse." });
