@@ -139,9 +139,6 @@ Références pertinentes : Identifiez et citez précisément les livres, chapitr
 Conclusion : Orientez l'utilisateur vers les références identifiées afin qu'il puisse approfondir sa recherche.
 Les réponses doivent être structurées exactement comme suit, en respectant les placements des ** et # :
 
-**Résumé de la question**
-[Insérez ici un court résumé de la question posée par l'utilisateur.]
-
 **Explication**
 [Analysez et reformulez la question pour clarifier les enjeux et donner un aperçu de l'angle juridique pertinent.]
 
@@ -154,8 +151,6 @@ Listez chaque référence clairement pour guider l'utilisateur.]
 [Concluez en réaffirmant les références identifiées et en guidant l'utilisateur vers les livres, chapitres et sections nécessaires pour trouver une réponse approfondie à sa question.]
 
 Exemple de structure finale pour l'assistant
-Résumé de la question
-La question concerne une infraction liée à [type d'infraction spécifique].
 
 **Explication**
 Comprendre les implications juridiques de cette infraction ainsi que les sections du code pénal qui y font référence.
