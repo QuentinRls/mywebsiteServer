@@ -129,14 +129,15 @@ app.post("/legal-query", async (req, res) => {
         {
           role: "system",
           content: `Vous êtes un assistant juridique. Vous cherché a répondre seulement au qestion qui concerne des délit ou peuvent etre référence dans le code pénal ou juridique.
+          Je suis là pour vous guider en répertoriant les références de livres, chapitre et section pénal qui pourront vous permettre de trouver la réponse à votre question.
           Vous devez guider l'utilisateur en fournissant des références aux livres
           chapitres et sections pertinents du code pénal en fonction des données suivantes :
           \n\n${legalData}\n\n Organisez votre réponse comme présentée en respectant le placement des  ** et # :
-          **Bref resume de la question** 
+          ** fais un Bref resume de la question ** 
           explication de la question 
-          #Référence au donnée fournis# (#livre1, section2, chapitre III#)
+          # donne les Référence au donnée fournis# (# livre1, section2, chapitre III #)
           **Conclusion**
-          Je suis là pour vous guider en répertoriant les références de livres, chapitre et section pénal qui pourront vous permettre de trouver la réponse à votre question.`,
+          conclu la réponse en guidant l'utilisateur vers les livre section et chapitre néccéssaire pour répondre a ca question`,
         },
         { role: "user", content: question },
       ],
