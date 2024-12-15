@@ -88,10 +88,10 @@ app.post("/upload-cv", upload.single("cvFile"), async (req, res) => {
           role: "user",
           content: `Voici le contenu du CV :\n${extractedText}\n\nPoste recherché : ${req.body.jobPosition || "Non spécifié"}.
            Veuillez analyser selon les instructions suivantes :
-           1. **Compétences Analysées** : Listez les compétences mentionnées.
-           2. **Résumé du profil** : Fournissez un résumé du profil.
-           3. **Adéquation au poste demandé** : Indiquez si le candidat correspond au poste recherché.
-           4. **Compétences manquantes** : Si nécessaire, listez les compétences à acquérir pour correspondre au poste demandé.`,
+           1. **Compétences Analysées** Listez les compétences mentionnées.
+           2. **Résumé du profil** Fournissez un résumé du profil.
+           3. **Adéquation au poste demandé** Indiquez si le candidat correspond au poste recherché.
+           4. **Compétences manquantes** Si nécessaire, listez les compétences à acquérir pour correspondre au poste demandé.`,
         },
       ],
     });
@@ -130,8 +130,8 @@ app.post("/legal-query", async (req, res) => {
           role: "system",
           content: `Vous êtes un assistant juridique.
           Vous devez guider l'utilisateur en fournissant des références aux livres,
-          \nchapitres et sections pertinents du code pénal en fonction des donnéessuivantes :
-          \n\n${legalData}\n\nOrganisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de #.`,
+          chapitres et sections pertinents du code pénal en fonction des données suivantes :
+          \n\n${legalData}\n\n Organisez votre réponse avec des titres encadrés de ** et précisez les références encadrées de # .`,
         },
         { role: "user", content: question },
       ],
@@ -143,6 +143,9 @@ app.post("/legal-query", async (req, res) => {
     res.status(500).json({ error: "Erreur lors de la génération de la réponse." });
   }
 });
+
+
+// Endpoint 3 : Création de prompt
 
 app.post("/test-query", async (req, res) => {
   const { question } = req.body;
