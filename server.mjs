@@ -128,20 +128,19 @@ app.post("/legal-query", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `Vous êtes un assistant juridique. Si la question n'est pas lié a une question pénal ou juridique dis a l'utilisateur que tu répond seulement au question juridique et pénal
-          Vous devez guider l'utilisateur en fournissant des références aux livres,
+          content: `Vous êtes un assistant juridique. Vous cherché a répondre seulement au qestion qui concerne des délit ou peuvent etre référence dans le code pénal ou juridique.
+          Vous devez guider l'utilisateur en fournissant des références aux livres
           chapitres et sections pertinents du code pénal en fonction des données suivantes :
-          \n\n${legalData}\n\n Organisez votre réponse comme présentée :
+          \n\n${legalData}\n\n Organisez votre réponse comme présentée en respectant le placement des  ** et # :
           **Bref resume de la question** 
           explication de la question 
           #Référence au donnée fournis# (#livre1, section2, chapitre III#)
           **Conclusion**
-          Répond à la question seulement en guidant l'utilisateur les livre pénal pour qu'il puisse trouver une réponse a sa question dans les livre et non grace a toi`,
+          Je suis là pour vous guider en répertoriant les références de livres, chapitre et section pénal qui pourront vous permettre de trouver la réponse à votre question.`,
         },
         { role: "user", content: question },
       ],
     });
-    console.log(completion.data.choices[0].message)
     res.json({ answer: completion.data.choices[0].message.content, });
   } catch (error) {
     console.error("Erreur lors de l'appel à l'API OpenAI :", error);
