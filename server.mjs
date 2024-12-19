@@ -218,9 +218,7 @@ app.post("/stock-data", async (req, res) => {
           content: `vous etes un fournisseur de json, renvoyant des Json sur les stocks demandés, 
           veuillez fournir les informations demandées en vous basant sur une réponse json contenant 
           les données sous cette forme en listant les résultat journalier des 30 dernier jours : 
-          [
-          { "date": "2024-12-16", "ouverture": 441.08, "cloture": 463.02 },
-          ]`,
+          { "date": "2024-12-16", "ouverture": 441.08, "cloture": 463.02 },`,
         },
         { role: "user", content: question },
       ],
