@@ -202,35 +202,35 @@ app.post("/test-query", async (req, res) => {
 
 // Endpoint 4 : stock Data
 
-app.post("/stock-data", async (req, res) => {
-  const { question } = req.body;
-  console.log("question is :", question);
+// app.post("/stock-data", async (req, res) => {
+//   const { question } = req.body;
+//   console.log("question is :", question);
 
-  if (!question || typeof question !== "string") {
-    return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
-  }
+//   if (!question || typeof question !== "string") {
+//     return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
+//   }
 
-  try {
-    const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: `vous etes un fournisseur de json, renvoyant des Json sur les stocks demandés, 
-          veuillez fournir les informations demandées en vous basant sur une réponse json contenant 
-          les données sous cette forme en listant les résultat journalier des 30 dernier jours : 
-          { "date": "2024-12-16", "ouverture": 441.08, "cloture": 463.02 },`,
-        },
-        { role: "user", content: question },
-      ],
-    });
-    console.log("completion is :", completion.data.choices[0].message.content);
-    res.json({ answer: completion.data.choices[0].message.content });
-  } catch (error) {
-    console.error("Erreur lors de l'appel à l'API OpenAI :", error);
-    res.status(500).json({ error: "Erreur lors de la génération de la réponse." });
-  }
-});
+//   try {
+//     const completion = await openai.createChatCompletion({
+//       model: "gpt-3.5-turbo",
+//       messages: [
+//         {
+//           role: "system",
+//           content: `vous etes un fournisseur de json, renvoyant des Json sur les stocks demandés, 
+//           veuillez fournir les informations demandées en vous basant sur une réponse json contenant 
+//           les données sous cette forme en listant les résultat journalier des 30 dernier jours : 
+//           { "date": "2024-12-16", "ouverture": 441.08, "cloture": 463.02 },`,
+//         },
+//         { role: "user", content: question },
+//       ],
+//     });
+//     console.log("completion is :", completion.data.choices[0].message.content);
+//     res.json({ answer: completion.data.choices[0].message.content });
+//   } catch (error) {
+//     console.error("Erreur lors de l'appel à l'API OpenAI :", error);
+//     res.status(500).json({ error: "Erreur lors de la génération de la réponse." });
+//   }
+// });
 
 // Serve static files
 app.use(express.static(publicDir));
