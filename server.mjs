@@ -224,7 +224,6 @@ app.post("/stock-data", async (req, res) => {
         { role: "user", content: question },
       ],
     });
-    console.log("completion is :", completion.data.choices[0].message.content);
     res.json({ answer: completion.data.choices[0].message.content });
   } catch (error) {
     console.error("Erreur lors de l'appel à l'API OpenAI :", error);
