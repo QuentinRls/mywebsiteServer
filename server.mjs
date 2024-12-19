@@ -200,6 +200,34 @@ app.post("/test-query", async (req, res) => {
   }
 });
 
+// Endpoint 4 : stock Data
+
+app.post("/stock-data", async (req, res) => {
+  const { question } = req.body;
+
+  if (!question || typeof question !== "string") {
+    return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
+  }
+
+  try {
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: `vous etes un fournisseur de json, renvoyant des Json sur les stocks demandés`,
+        },
+        { role: "user", content: question },
+      ],
+    });
+
+    res.json({ answer: completion.data.choices[0].message.content });
+  } catch (error) {
+    console.error("Erreur lors de l'appel à l'API OpenAI :", error);
+    res.status(500).json({ error: "Erreur lors de la génération de la réponse." });
+  }
+});
+
 // Serve static files
 app.use(express.static(publicDir));
 
