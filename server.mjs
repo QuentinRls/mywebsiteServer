@@ -204,6 +204,7 @@ app.post("/test-query", async (req, res) => {
 
 app.post("/stock-data", async (req, res) => {
   const { question } = req.body;
+  console.log("question is :", question);
 
   if (!question || typeof question !== "string") {
     return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
@@ -223,7 +224,7 @@ app.post("/stock-data", async (req, res) => {
         { role: "user", content: question },
       ],
     });
-
+    console.log("completion is :", completion.data.choices[0].message.content);
     res.json({ answer: completion.data.choices[0].message.content });
   } catch (error) {
     console.error("Erreur lors de l'appel à l'API OpenAI :", error);
