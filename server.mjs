@@ -147,7 +147,6 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
       } else if (missionFileType.startsWith('image/')) {
         const { data: { text } } = await Tesseract.recognize(missionFileBuffer, 'eng');
         missionText = text;
-        console.log("Texte extrait de l'image de mission :", missionText);
 
         if (!missionText) {
           return res.status(400).send("Le fichier image de mission est vide ou illisible.");
@@ -158,7 +157,7 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
     }
 
     const jobPosition = req.body.jobPosition || "Non spécifié";
-    const combinedJobPosition = missionText ? `${jobPosition}\n\nMission:\n${missionText}` : jobPosition;
+    const combinedJobPosition = missionText ? missionText : jobPosition;
 
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
