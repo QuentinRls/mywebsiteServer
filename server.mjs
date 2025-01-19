@@ -1,4 +1,5 @@
 import express from "express";
+import Tesseract from 'tesseract.js';
 import multer from "multer";
 import fs from "fs/promises";
 import path from "path";
