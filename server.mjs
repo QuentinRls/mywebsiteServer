@@ -111,7 +111,6 @@ app.post("/upload-cv", upload.single("cvFile"), async (req, res) => {
   }
 });
 
-const Tesseract = require('tesseract.js');
 
 app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 'missionFile', maxCount: 1 }]), async (req, res) => {
   let cvFilePath, missionFilePath, missionText = '';
