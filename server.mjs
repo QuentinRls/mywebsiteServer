@@ -110,6 +110,71 @@ app.post("/upload-cv", upload.single("cvFile"), async (req, res) => {
   }
 });
 
+app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 'missionFile', maxCount: 1 }]), async (req, res) => {
+  let cvFilePath, missionFilePath, missionText = '';
+  try {
+    if (!req.files['cvFile']) {
+      return res.status(400).send("Aucun fichier CV téléchargé.");
+    }
+
+    cvFilePath = req.files['cvFile'][0].path;
+    console.log("Chemin du fichier CV temporaire :", cvFilePath);
+
+    const cvFileBuffer = await fs.readFile(cvFilePath);
+    const cvPdfData = await pdfParse(cvFileBuffer);
+    const cvExtractedText = cvPdfData.text;
+
+    if (!cvExtractedText) {
+      return res.status(400).send("Le fichier PDF du CV est vide ou illisible.");
+    }
+
+    if (req.files['missionFile']) {
+      missionFilePath = req.files['missionFile'][0].path;
+      console.log("Chemin du fichier de mission temporaire :", missionFilePath);
+
+      const missionFileBuffer = await fs.readFile(missionFilePath);
+      const missionPdfData = await pdfParse(missionFileBuffer);
+      missionText = missionPdfData.text;
+
+      if (!missionText) {
+        return res.status(400).send("Le fichier PDF de mission est vide ou illisible.");
+      }
+    }
+
+    const jobPosition = req.body.jobPosition || "Non spécifié";
+    const combinedJobPosition = missionText ? `${jobPosition}\n\nMission:\n${missionText}` : jobPosition;
+
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content:
+            `Vous êtes un assistant spécialisé en analyse de CV. 
+            Chaque titre sera entouré d'une double astérisque comme ceci : **Titre**. Veuillez fournir une analyse structurée du CV suivant les critères donnés.`,
+        },
+        {
+          role: "user",
+          content: `Voici le contenu du CV :\n${cvExtractedText}\n\nPoste recherché : ${combinedJobPosition}.
+           Veuillez analyser selon les instructions suivantes :
+           1. **Compétences Analysées** Listez les compétences mentionnées.
+           2. **Résumé du profil** Fournissez un résumé du profil.
+           3. **Adéquation au poste demandé** Indiquez si le candidat correspond au poste recherché.
+           4. **Compétences manquantes** Si nécessaire, listez les compétences à acquérir pour correspondre au poste demandé.`,
+        },
+      ],
+    });
+
+    res.json({
+      message: "Analyse réussie",
+      analysis: completion.data.choices[0].message.content,
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'analyse du fichier :", error);
+    res.status(500).send("Erreur lors de l'analyse du fichier.");
+  }
+});
+
 // Endpoint 2 : Recherche avancée juridique (RAG)
 app.post("/legal-query", async (req, res) => {
   const { question } = req.body;
@@ -193,37 +258,6 @@ app.post("/test-query", async (req, res) => {
       ],
     });
 
-    res.json({ answer: completion.data.choices[0].message.content });
-  } catch (error) {
-    console.error("Erreur lors de l'appel à l'API OpenAI :", error);
-    res.status(500).json({ error: "Erreur lors de la génération de la réponse." });
-  }
-});
-
-// Endpoint 4 : stock Data
-
-app.post("/stock-data", async (req, res) => {
-  const { question } = req.body;
-  console.log("question is :", question);
-
-  if (!question || typeof question !== "string") {
-    return res.status(400).json({ error: "La question doit être une chaîne de caractères valide." });
-  }
-
-  try {
-    const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: `vous etes un fournisseur de json, renvoyant des Json sur les stocks demandés, 
-          veuillez fournir les informations demandées en vous basant sur une réponse json contenant 
-          les données sous cette forme en listant les résultat journalier des 30 dernier jours : 
-          { "date": "2024-12-16", "ouverture": 441.08, "cloture": 463.02 },`,
-        },
-        { role: "user", content: question },
-      ],
-    });
     res.json({ answer: completion.data.choices[0].message.content });
   } catch (error) {
     console.error("Erreur lors de l'appel à l'API OpenAI :", error);
