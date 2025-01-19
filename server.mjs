@@ -110,6 +110,8 @@ app.post("/upload-cv", upload.single("cvFile"), async (req, res) => {
   }
 });
 
+const Tesseract = require('tesseract.js');
+
 app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 'missionFile', maxCount: 1 }]), async (req, res) => {
   let cvFilePath, missionFilePath, missionText = '';
   try {
@@ -133,11 +135,24 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
       console.log("Chemin du fichier de mission temporaire :", missionFilePath);
 
       const missionFileBuffer = await fs.readFile(missionFilePath);
-      const missionPdfData = await pdfParse(missionFileBuffer);
-      missionText = missionPdfData.text;
+      const missionFileType = req.files['missionFile'][0].mimetype;
 
-      if (!missionText) {
-        return res.status(400).send("Le fichier PDF de mission est vide ou illisible.");
+      if (missionFileType === 'application/pdf') {
+        const missionPdfData = await pdfParse(missionFileBuffer);
+        missionText = missionPdfData.text;
+
+        if (!missionText) {
+          return res.status(400).send("Le fichier PDF de mission est vide ou illisible.");
+        }
+      } else if (missionFileType.startsWith('image/')) {
+        const { data: { text } } = await Tesseract.recognize(missionFileBuffer, 'eng');
+        missionText = text;
+
+        if (!missionText) {
+          return res.status(400).send("Le fichier image de mission est vide ou illisible.");
+        }
+      } else {
+        missionText = missionFileBuffer.toString('utf-8');
       }
     }
 
