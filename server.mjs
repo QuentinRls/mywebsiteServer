@@ -166,7 +166,7 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
           role: "system",
           content:
             `Vous êtes un assistant spécialisé en analyse de CV. 
-            Chaque titre sera entouré seulement d'une double astérisque comme ceci : **Titre** et sera prédédé d'un retour a la ligne Veuillez fournir une analyse structurée du CV suivant les critères donnés.`,
+            Chaque titre sera entouré seulement d'une double astérisque comme ceci : **Titre** et sera suivi d'un retour a la ligne Veuillez fournir une analyse structurée du CV suivant les critères donnés.`,
         },
         {
           role: "user",
