@@ -166,19 +166,19 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
           role: "system",
           content:
             `Vous êtes un assistant spécialisé en analyse de CV. 
-            Chaque titre sera entouré d'une double astérisque comme ceci : **Titre**. Veuillez fournir une analyse structurée du CV suivant les critères donnés.`,
+            Chaque titre sera entouré seulement d'une double astérisque comme ceci : **Titre** et sera prédédé d'un retour a la ligne Veuillez fournir une analyse structurée du CV suivant les critères donnés.`,
         },
         {
           role: "user",
           content: `Voici le contenu du CV :\n${cvExtractedText}\n\nPoste recherché : ${combinedJobPosition}.
            Veuillez analyser selon les instructions suivantes :
-           1. **Compétences Analysées** Listez les compétences mentionnées.
-           2. **Résumé du profil** Fournissez un résumé du profil.
-           3. **Adéquation au poste demandé** Indiquez si le candidat correspond au poste recherché.
-           4. **Compétences manquantes** Si nécessaire, listez les compétences à acquérir pour correspondre au poste demandé.
-           5. **Analyse de la mission** Analysez la mission pour déterminer si le candidat est adapté.
-           6. **Compétences requises** Listez les compétences requises pour la mission.
-           7. **Compétences manquantes pour la mission** Si nécessaire, listez les compétences à acquérir pour la mission.
+           **Compétences Analysées** Listez les compétences mentionnées.
+           **Résumé du profil** Fournissez un résumé du profil.
+           **Adéquation au poste demandé** Indiquez si le candidat correspond au poste recherché.
+           **Compétences manquantes** Si nécessaire, listez les compétences à acquérir pour correspondre au poste demandé.
+           **Analyse de la mission** Analysez la mission pour déterminer si le candidat est adapté.
+           **Compétences requises** Listez les compétences requises pour la mission.
+           **Compétences manquantes pour la mission** Si nécessaire, listez les compétences à acquérir pour la mission.
              terminez par donné un pourcentage d'adéquation du candidat à la mission`,
         },
       ],
