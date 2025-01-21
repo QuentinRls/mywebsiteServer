@@ -179,7 +179,7 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
            **Analyse de la mission** Analysez la mission pour déterminer si le candidat est adapté.
            **Compétences requises** Listez les compétences requises pour la mission.
            **Compétences manquantes pour la mission** Si nécessaire, listez les compétences à acquérir pour la mission.
-             terminez par donné un pourcentage d'adéquation du candidat à la mission`,
+           **Adéquation au poste demandé** contenant un pourcentage d'adéquation du candidat à la mission`,
         },
       ],
     });
