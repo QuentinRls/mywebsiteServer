@@ -197,6 +197,7 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
 
 app.post("/emailCreator", upload.single("cvFile"), async (req, res) => {
   let filePath;
+  const isRefusal = req.body.isRefusal;
   try {
     if (!req.file) {
       return res.status(400).send("Aucun fichier téléchargé.");
@@ -218,13 +219,14 @@ app.post("/emailCreator", upload.single("cvFile"), async (req, res) => {
       messages: [
         {
           role: "system",
-          content:
-            `Selon le ${req.body.isRefusal} false = prise de rendez vous / true = refus
-            ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat, 
-            soit pour dire que tu souhaiterais allé plus loin et 
-            fixer une potentielle interview, ou soit pour évoquer un refus de la candidature.
+          content: isRefusal ? 
+          `ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat,
+            pour évoquer un refus de la candidature.
             aide toi des information fournis dans le cv, tout en restant simple.
-            tu peux t'aider via les information du candidat`,
+            tu peux t'aider via les information du candidat` : 
+          ` ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat, 
+            pour dire que tu souhaiterais allé plus loin et 
+            fixer une potentielle interview avec lui.`,
         },
         {
           role: "user",
