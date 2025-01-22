@@ -221,7 +221,7 @@ app.post("/emailCreator", upload.single("cvFile"), async (req, res) => {
     ` ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat, 
       pour dire que tu souhaiterais allé plus loin et 
       fixer une potentielle interview avec lui.`
-    console.log("Valeur de isRefusal:", IATone);
+    console.log("Valeur de isRefusal:", isRefusal, "\ntexte donné : ",IATone);
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
