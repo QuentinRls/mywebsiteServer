@@ -219,7 +219,9 @@ app.post("/emailCreator", upload.single("cvFile"), async (req, res) => {
         {
           role: "system",
           content:
-            `Selon le ${req.body.isRefusal} ecris un mail professionnel en tant que RH disant, soit pour dire que tu souhaiterais allé plus loin et 
+            `Selon le ${req.body.isRefusal} false = prise de rendez vous / true = refus
+            ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat, 
+            soit pour dire que tu souhaiterais allé plus loin et 
             fixer une potentielle interview, ou soit pour évoquer un refus de la candidature.
             aide toi des information fournis dans le cv, tout en restant simple.
             tu peux t'aider via les information du candidat`,
