@@ -216,11 +216,11 @@ app.post("/emailCreator", upload.single("cvFile"), async (req, res) => {
     let IATone;
     console.log("Valeur de isRefusal:", isRefusal, "\n\n");
 
-    if (isRefusal == false) {
+    if (isRefusal == false || isRefusal == "false") {
       IATone = `ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat, 
                 pour dire que tu souhaiterais allé plus loin et 
                 fixer une potentielle interview avec lui.`;
-    } else if (isRefusal == true) {
+    } else if (isRefusal == true || isRefusal == "true") {
       IATone = `ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat,
                 pour évoquer un refus de la candidature.
                 aide toi des information fournis dans le cv, tout en restant simple.
