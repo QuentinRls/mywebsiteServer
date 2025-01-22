@@ -213,15 +213,19 @@ app.post("/emailCreator", upload.single("cvFile"), async (req, res) => {
     if (!extractedText) {
       return res.status(400).send("Le fichier PDF est vide ou illisible.");
     }
-    const IATone = isRefusal ? 
-    `ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat,
-      pour évoquer un refus de la candidature.
-      aide toi des information fournis dans le cv, tout en restant simple.
-      tu peux t'aider via les information du candidat` : 
-    ` ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat, 
-      pour dire que tu souhaiterais allé plus loin et 
-      fixer une potentielle interview avec lui.`
-    console.log("Valeur de isRefusal:", isRefusal, "\ntexte donné : ",IATone);
+    let IATone;
+
+    if (isRefusal) {
+      IATone = `ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat, 
+                pour dire que tu souhaiterais allé plus loin et 
+                fixer une potentielle interview avec lui.`;
+    } else {
+      IATone = `ecris un mail professionnel en tant que RH disant en t'adressant directement au candidat,
+                pour évoquer un refus de la candidature.
+                aide toi des information fournis dans le cv, tout en restant simple.
+                tu peux t'aider via les information du candidat`;
+    }
+    console.log("Valeur de isRefusal:", isRefusal, "\ntexte donné : ", IATone);
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
