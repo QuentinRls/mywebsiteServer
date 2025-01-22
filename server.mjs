@@ -156,7 +156,7 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
       }
     }
 
-    const jobPosition = req.body.jobPosition || "Non spécifié";
+    const jobPosition = req.body.jobPosition;
     const combinedJobPosition = missionText ? missionText : jobPosition;
 
     const completion = await openai.createChatCompletion({
@@ -191,6 +191,57 @@ app.post("/upload-cv2", upload.fields([{ name: 'cvFile', maxCount: 1 }, { name: 
   } catch (error) {
     console.error("Erreur lors de l'analyse du fichier :", error);
     res.status(500).send("Erreur lors de l'analyse du fichier.");
+  }
+});
+
+
+app.post("/emailCreator", upload.single("cvFile"), async (req, res) => {
+  let filePath;
+  try {
+    if (!req.file) {
+      return res.status(400).send("Aucun fichier téléchargé.");
+    }
+
+    filePath = req.file.path;
+    console.log("Chemin du fichier temporaire :", filePath);
+
+    const fileBuffer = await fs.readFile(filePath);
+    const pdfData = await pdfParse(fileBuffer);
+    const extractedText = pdfData.text;
+
+    if (!extractedText) {
+      return res.status(400).send("Le fichier PDF est vide ou illisible.");
+    }
+
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content:
+            `Selon le ${req.body.isRefusal} ecris un mail professionnel en tant que RH disant, soit pour dire que tu souhaiterais allé plus loin et 
+            fixer une potentielle interview, ou soit pour évoquer un refus de la candidature.
+            aide toi des information fournis dans le cv, tout en restant simple.
+            tu peux t'aider via les information du candidat`,
+        },
+        {
+          role: "user",
+          content: `Voici les information du candidat :\n${extractedText}\n\nPoste recherché : ${req.body.jobPosition}.`,
+        },
+      ],
+    });
+
+    res.json({
+      message: "Analyse réussie",
+      analysis: completion.data.choices[0].message.content,
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'analyse du fichier :", error);
+    res.status(500).send("Erreur lors de l'analyse du fichier.");
+  } finally {
+    if (filePath) {
+      await fs.unlink(filePath);
+    }
   }
 });
 
