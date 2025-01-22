@@ -213,7 +213,7 @@ app.post("/emailCreator", upload.single("cvFile"), async (req, res) => {
     if (!extractedText) {
       return res.status(400).send("Le fichier PDF est vide ou illisible.");
     }
-
+    console.log("Valeur de isRefusal:", isRefusal);
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
